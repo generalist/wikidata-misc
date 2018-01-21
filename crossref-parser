@@ -1,0 +1,111 @@
+#!/bin/bash
+
+# this script takes a big pile of DOIs and parses the JSON for Wikidata upload
+# JSONs have already been pulled down from Crossref and are in json/... with an indicative filename
+# then a target list is in doichunks
+
+# note that this script has issues if the item is not yet properly published - it tries to check for this but caveat emptor.
+# it is currently hardcoded to work with Biographical Memoirs of the Royal Society so this needs to be unpicked for future work
+
+
+rm output/*
+
+for i in `cat doichunks` ; do
+
+# existingdoi is all DOIs currently on Wikidata and will make it update rather than create anew
+# format
+# Q28016096	10.1098/rsbm.2009.0015
+
+if grep -q $i existingdoi ; then
+   echo $i exists
+   echo -e `grep $i existingdoi | cut -f 1`"\t"P31"\t"Q18918145"\t"S143"\t"Q28946522"\t"S854"\t"\"https\:\/\/doi.org\/10.1098\/rsbm.$i\" >> output/$i.quickstatements
+   echo -e LAST"\t"Den"\t"\"Biographical article\" >> output/$i.quickstatements
+else
+   echo $i is new
+   echo -e CREATE > output/$i.quickstatements
+   echo -e LAST"\t"P31"\t"Q18918145"\t"S143"\t"Q28946522"\t"S854"\t"\"https\:\/\/doi.org\/10.1098\/rsbm.$i\" >> output/$i.quickstatements
+   echo -e LAST"\t"Den"\t"\"Biographical article\" >> output/$i.quickstatements
+fi
+
+# note that item type and description are hardcoded
+
+
+# parse for title, doi, pagenumber, volume
+
+echo -e LAST"\t"Len"\t"`cat json/$i.json | jq '.message.title[]'` >> output/$i.quickstatements
+echo -e LAST"\t"P1476"\t""en:"`cat json/$i.json | jq '.message.title[]'`"\t"S143"\t"Q28946522"\t"S854"\t"\"https\:\/\/doi.org\/10.1098\/rsbm.$i\" >> output/$i.quickstatements
+echo -e LAST"\t"P356"\t"\"10.1098\/rsbm.$i\""\t"S143"\t"Q28946522"\t"S854"\t"\"https\:\/\/doi.org\/10.1098\/rsbm.$i\" >> output/$i.quickstatements
+echo -e LAST"\t"P304"\t"`cat json/$i.json | jq '.message.page'`"\t"S143"\t"Q28946522"\t"S854"\t"\"https\:\/\/doi.org\/10.1098\/rsbm.$i\" >> output/$i.quickstatements
+
+# not all items have "issue" but those seem to mostly be reported as issue(0)
+# some items 1980.0009 and 1988.0007 are missing any issue field - weird
+
+# so if null, only do volume
+
+if [ "`cat json/$i.json | jq '.message.issue'`" == null ] ;
+then 
+    echo -e LAST"\t"P478"\t"`cat json/$i.json | jq '.message.volume'`"\t"S143"\t"Q28946522"\t"S854"\t"\"https\:\/\/doi.org\/10.1098\/rsbm.$i\" >> output/$i.quickstatements ; 
+else 
+    echo -e LAST"\t"P478"\t"`cat json/$i.json | jq '.message.volume'`"\t"S143"\t"Q28946522"\t"S854"\t"\"https\:\/\/doi.org\/10.1098\/rsbm.$i\" >> output/$i.quickstatements
+    echo -e LAST"\t"P433"\t"`cat json/$i.json | jq '.message.issue'`"\t"S143"\t"Q28946522"\t"S854"\t"\"https\:\/\/doi.org\/10.1098\/rsbm.$i\" >> output/$i.quickstatements
+fi
+
+
+
+# there are two possible journals in our set, so make sure to check which one it is
+
+echo -e LAST"\t"P1433"\t"`cat json/$i.json | jq '.message."container-title"[]' | sed 's/"Biographical Memoirs of Fellows of the Royal Society"/Q4914871/g' | sed 's/"Obituary Notices of Fellows of the Royal Society"/Q29043655/g'`"\t"S143"\t"Q28946522"\t"S854"\t"\"https\:\/\/doi.org\/10.1098\/rsbm.$i\" >> output/$i.quickstatements
+
+# date is broken up by whether it has a day or just a month
+# day precision means five lines in jq, month four
+# and so ...
+# this one is a bit complicated - break out all date elements, change to leading zero if needed
+# could be extended to cope with year-precision dates, but thankfully none here
+
+if [ "`cat json/$i.json | jq '.message.issued."date-parts"[]' | wc -l`" -eq 5 ] ; 
+then 
+    echo -e LAST"\t"P577"\t"\+`cat json/$i.json | jq '.message.issued[]' | sed '3q;d' | sed 's/ //g' | sed 's/,//g' | sed 's/\(^[0-9]$\)/0\1/g'`-`cat json/$i.json | jq '.message.issued[]' | sed '4q;d' | sed 's/ //g' | sed 's/,//g'| sed 's/\(^[0-9]$\)/0\1/g'`-`cat json/$i.json | jq '.message.issued[]' | sed '5q;d' | sed 's/ //g' | sed 's/\(^[0-9]$\)/0\1/g'`T00\:00\:00Z\/11"\t"S143"\t"Q28946522"\t"S854"\t"\"https\:\/\/doi.org\/10.1098\/rsbm.$i\" >> output/$i.quickstatements ;
+else 
+    echo -e LAST"\t"P577"\t"\+`cat json/$i.json | jq '.message.issued[]' | sed '3q;d' | sed 's/ //g' | sed 's/,//g' | sed 's/\(^[0-9]$\)/0\1/g'`-`cat json/$i.json | jq '.message.issued[]' | sed '4q;d' | sed 's/ //g' | sed 's/\(^[0-9]$\)/0\1/g'`-00T00\:00\:00Z\/10"\t"S143"\t"Q28946522"\t"S854"\t"\"https\:\/\/doi.org\/10.1098\/rsbm.$i\" >> output/$i.quickstatements ;
+fi
+
+# how many authors do we have?
+
+AUTHORS=`cat json/$i.json | jq '.message.author[]' | grep ""given"" | wc -l`
+
+# let's get the names 
+
+cat json/$i.json | jq '.message.author | map(.given + " " + .family) | join(";")' | sed 's/\"//g' > workingnames
+
+# then for each time we have a name, get the next one from our list
+
+for n in `seq 1 $AUTHORS` ; do 
+    echo -e LAST"\t"P2093"\t"\"`cut -f $n -d \; workingnames`\""\t"P1545"\t"\"$n\""\t"S143"\t"Q28946522"\t"S854"\t"\"https\:\/\/doi.org\/10.1098\/rsbm.$i\" >> output/$i.quickstatements
+done
+
+done
+
+rm workingnames
+
+# okay, now we need to assemble a single giant file of items to upload
+
+# this finds all the ones which have a valid published date (ie are not in press)
+
+grep -L "+--" output/* > uploadlist
+
+# and this now breaks it up into seperate chunks by DOI suffix to simplify the uploads
+
+cat `cat uploadlist | grep /193` > 1930s-uploadlist
+cat `cat uploadlist | grep /194` > 1940s-uploadlist
+cat `cat uploadlist | grep /195` > 1950s-uploadlist
+cat `cat uploadlist | grep /196` > 1960s-uploadlist
+cat `cat uploadlist | grep /197` > 1970s-uploadlist
+cat `cat uploadlist | grep /198` > 1980s-uploadlist
+cat `cat uploadlist | grep /199` > 1990s-uploadlist
+cat `cat uploadlist | grep /200` > 2000s-uploadlist
+cat `cat uploadlist | grep /201` > 2010s-uploadlist
+
+
+exit
+
+###
