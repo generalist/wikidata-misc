@@ -27,5 +27,21 @@ cat working/removable-claims.tsv | sed "s/<http:\/\/www.wikidata.org\/entity\/st
 
 # now run wd-cli for each of these
 
-for i in `cat working/removal-commands` ; do wd remove-claim "$i" ; done
+echo -e "there are "`wc -l working/removal-commands` " duplicate claims with no qualifiers or references."
+
+read -p "Do you want to remove them? " -n 1 -r
+echo    # (optional) move to a new line
+if [[ $REPLY =~ ^[Yy]$ ]]
+then
+
+echo "Here we go!"
+
+  for i in `cat working/removal-commands` ; do wd remove-claim "$i" ; done
+
+else
+
+echo "Okay - the list is at working/removal-commands"
+
+fi
+
 
