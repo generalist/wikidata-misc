@@ -2,7 +2,7 @@
 
 #this tool finds items with duplicate claims, and then merges them together
 
-# eg for P40
+# eg for "father"
 # https://w.wiki/Dhg
 # simpler approach - only items with one claim having a ref, not the other
 # https://w.wiki/DiM
@@ -43,3 +43,5 @@ else
 echo "Okay - the list is at working/removal-commands"
 
 fi
+
+
