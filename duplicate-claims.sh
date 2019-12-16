@@ -8,12 +8,12 @@
 # https://w.wiki/DiM
 
 # this current version finds all items with:
-# two claims for the same P value (eg P22 "father")
+# two claims for the same Pxx value 
 # one claim having a reference and the other not
 # and neither claim having any qualifiers *at all*
 # it then deletes the extra claim using wd-cli
 
-# future version will merge the qualifiers, but that's a way off yet
+# suitable properties for this - P22 father, P25 mother, P40 child
 
 # set the property
 
@@ -30,11 +30,11 @@ grep -v "true" working/output.tsv | grep -v "?" | cut -f 4 > working/removable-c
 
 # tidy up into a form wd-cli will like
 
-cat working/removable-claims.tsv | sed "s/<http:\/\/www.wikidata.org\/entity\/statement\///g" | sed "s/>//g" | sed "s/-/$/" > working/removal-commands
+cat working/removable-claims.tsv | sed "s/<http:\/\/www.wikidata.org\/entity\/statement\///g" | sed "s/>//g" | sed "s/-/$/" | uniq > working/removal-commands
 
 # now run wd-cli for each of these
 
-echo -e "there are "`cat working/removal-commands | wc -l` " duplicate "$PROP" claims with no qualifiers or references."
+echo -e "there are "`cat working/removal-commands | wc -l`" duplicate "$PROP" claims with no qualifiers or references."
 
 read -p "Do you want to remove them? " -n 1 -r
 echo    # (optional) move to a new line
