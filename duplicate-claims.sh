@@ -27,7 +27,7 @@ echo "Property "$PROP" set"
 # first download the list
 curl --header "Accept: text/tab-separated-values" https://query.wikidata.org/sparql?query=SELECT%20DISTINCT%20%20%3Fitem%20%3Ffather%20%3Fps1%20%3Fps2%20%3Fref1%20%3Fref2%20%3Fq1%20%3Fq2%0AWHERE%0A%7B%0A%09%3Fitem%20p%3A$PROP%20%3Fps1%20.%20%3Fps1%20ps%3A$PROP%20%3Ffather%20.%20%3Fps1%20prov%3AwasDerivedFrom%20%3Fref1%20.%0A%20%20%20%20%3Fitem%20p%3A$PROP%20%3Fps2%20.%20%3Fps2%20ps%3A$PROP%20%3Ffather%20.%20minus%20%7B%20%3Fps2%20prov%3AwasDerivedFrom%20%3Fref2%20%7D%0A%20%20%20%20filter%20%28str%28%3Fps1%29%20%21%3D%20str%28%3Fps2%29%29%0A%09bind%28exists%20%7B%20%3Fps1%20%3Fpq1%20%3Fqualifier1%20.%20%3Fproperty1%20wikibase%3Aqualifier%20%3Fpq1%20.%20%7D%20as%20%3Fq1%29%20%0A%09bind%28exists%20%7B%20%3Fps2%20%3Fpq2%20%3Fqualifier2%20.%20%3Fproperty2%20wikibase%3Aqualifier%20%3Fpq2%20.%20%7D%20as%20%3Fq2%29%0A%7D%0A > working/output.tsv
 
-# now check no fields are "true" (ie there is no field with references) and then cut out all the claim2's, the ones with no references, and header line
+# now check no fields are "true" (ie there is no field with qualifiers) and then cut out all the claim2's, the ones with no qualifiers, and header line
 
 grep -v "true" working/output.tsv | grep -v "?" | cut -f 4 > working/removable-claims.tsv
 
