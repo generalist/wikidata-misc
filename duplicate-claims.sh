@@ -15,6 +15,9 @@
 
 # suitable properties for this - P22 father, P25 mother, P40 child
 
+# requires wikibase-cli
+# https://github.com/maxlath/wikibase-cli
+
 # set the property
 
 echo "What property would you like?"
