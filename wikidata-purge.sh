@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# https://github.com/generalist/wikidata-misc/blob/master/wikidata-purge.sh
+
 clear
 echo "This script is designed to purge all Wikidata items using a certain property, after the formatter URL has been changed."
 echo ""
