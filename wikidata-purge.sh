@@ -4,7 +4,7 @@
 
 # under no server lag, this script purges ~5 items/minute; if maxlag increases, it starts slowing down.
 # if maxlag is severe, requests will time out and items will *not* be purged and these are not yet logged.
-# under testing at low-moderate maxlag, no more than ~2% of items timed out, however.
+# under testing at low-moderate maxlag, no more than ~2% of items timed out; this slows the overall rate to 3-4 per minute, however
 
 
 clear
