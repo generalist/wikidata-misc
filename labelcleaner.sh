@@ -4,6 +4,11 @@
 # it takes a set of items in source.tsv (one column of QIDs) and a language code
 # and then systematically blanks *all* labels, descriptions, and aliases which exist
 # for those languages on those items
+#
+# https://github.com/generalist/wikidata-misc/blob/master/labelcleaner.sh
+#
+# to just do any one of the three, comment out the relevant bits
+
 
 echo "Items for cleanup should be in cleanup.tsv"
 echo "The first column must be QIDs eg Q12345; any other columns are ignored"
