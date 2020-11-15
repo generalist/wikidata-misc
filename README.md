@@ -3,7 +3,9 @@ Various Wikidata maintenance/upload scripts
 
 ### duplicate-claims.sh
 
-Finds items with two identical claims for the same property (intended for father/mother/child), checks there are no qualifiers or references, and removes one. Uses wikibase-cli.
+Finds items with two identical claims for the same property (intended for father/mother/child), checks there are no qualifiers on either, and removes one. Uses wikibase-cli.
+
+This script will at some point be adapted to merge references on the two claims, but for the moment it backs off if any references are present.
 
 ### labelcleaner.sh
 
