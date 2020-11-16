@@ -56,6 +56,10 @@ then
 
 echo "Here we go!"
 
+python3 ~/pywikibot/pwb.py touch -page:Property:$PROP -purge
+
+echo "Property purged (to be safe)"
+
 for i in `cat ~/scripts/working/purgescript-upload.tsv` ;
 
 do echo "$i to be purged"
