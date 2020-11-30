@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# https://github.com/generalist/wikidata-misc/raw/master/qualifier-removal.sh
+
 # this script is a wrapper for wikibase-cli to remove a set of qualifiers
 # (made available because it can be quite tricky to handle remove-qualifier commands otherwise)
 
