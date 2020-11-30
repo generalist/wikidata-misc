@@ -13,7 +13,7 @@ Removes *all* labels, descriptions, and aliases for a specific language from a s
 
 ### qualifier-removal.sh
 
-Removes all qualifiers of a set type (example given is P582) from a set of statements. Uses wikibase-cli.
+Removes all qualifiers of a set type (example given is P582) from a set of statements. Uses wikibase-cli and jq.
 
 ### wikidata-purge.sh
 
