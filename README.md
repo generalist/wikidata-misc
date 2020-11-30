@@ -11,6 +11,10 @@ This script will at some point be adapted to merge references on the two claims,
 
 Removes *all* labels, descriptions, and aliases for a specific language from a set of items. Uses wikibase-cli.
 
+### qualifier-removal.sh
+
+Removes all qualifiers of a set type (example given is P582) from a set of statements. Uses wikibase-cli.
+
 ### wikidata-purge.sh
 
 Forces a purge on all items using a certain property, in order to update formatter URLs (as a workaround for [phab:T112081](https://phabricator.wikimedia.org/T112081)). Uses pywikibot. 
