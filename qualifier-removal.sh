@@ -3,7 +3,7 @@
 # https://github.com/generalist/wikidata-misc/blob/master/qualifier-removal.sh
 
 # this script is a wrapper for wikibase-cli to remove a set of qualifiers
-# (made available because it can be quite tricky to handle remove-qualifier commands otherwise)
+# (made available because it can be quite tricky to handle hashes)
 
 # takes list of statement IDs and writes a script to remove qualifiers
 # statement IDs are as pulled down from WDQS, eg wds:Q1827902-6706334E-D27E-4F4B-B6DA-ABE7544DF11C
