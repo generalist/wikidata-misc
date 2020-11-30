@@ -11,6 +11,8 @@
 
 # P582 is hardcoded as this is the expected use case
 
+# NB that if *two* values are given for the same qualifier in the same claim, it will only remove the first one
+
 cat quallist | sed 's/wds:\(Q[0-9]*\)-/\1$/g' > qualtemp
 
 echo -e "echo '" > qualbatch
