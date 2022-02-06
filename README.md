@@ -19,7 +19,7 @@ Removes all qualifiers of a set type (example given is P582) from a set of state
 
 Forces a purge on all items using a certain property, in order to update formatter URLs (as a workaround for [phab:T112081](https://phabricator.wikimedia.org/T112081)). Uses pywikibot. 
 
-It is important before using this to confirm that the property has itself been purged, and that a manual purge of an item brings up the correct formatter URL links. This can sometimes be a bit delayed so it is best to wait a little while after editing the formatter URL and confirm the system has caught up. Otherwise the script may purge the items without any useful effect.
+It is important before using this to confirm that the property has itself been purged, and that a manual purge of an item brings up the correct formatter URL links. The formatter URL is cached for 24 hours after the property is edited, so you will need to wait a day before running the script. Otherwise the script may purge the items without any useful effect.
 
 At maximum speed the pywikibot script makes about five or six purges per minute, so a maximum of about seven to eight thousand per day. This script is thus not suitable for properties with tens of thousands of items unless you are very patient, or most of those items are recently edited anyway and do not need purging.
 
