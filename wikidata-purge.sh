@@ -17,9 +17,9 @@ echo "What property has been updated? Enter as Pxxxx."
 read PROP
 echo "Property "$PROP" set."
 echo ""
-echo "--//--"
+echo "NOTE: The edit to the formatter URL must be at least 24 hours ago, otherwise the internal cache will still have the old data and formatting will not achieve anything."
 echo ""
-echo "NOTE: The edit to the formatter URL must be at least 24 hours ago, otherwise the internal cache will still have the old data."
+echo "--//--"
 echo ""
 echo "What date was it changed on? Enter as eg 2020-01-20."
 read DATE1
